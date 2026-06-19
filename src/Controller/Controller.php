@@ -10,13 +10,11 @@ use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class Controller extends ExtensionController
 {
-    /**
-     * @Route("/dragsort", name="dragsort_sort", methods={"POST"})
-     */
+    #[Route('/dragsort', name: 'dragsort_sort', methods: ['POST'])]
     public function handleDragSort(Request $request, ContentFactory $contentFactory): JsonResponse
     {
         return $this->handleRequest($request, $contentFactory);
@@ -24,18 +22,18 @@ class Controller extends ExtensionController
 
     private function handleRequest(Request $request, ContentFactory $contentFactory)
     {
+        $contentType = (string) $request->get('contentType');
+        $page = max(1, (int) $request->get('page', 1));
+        $order = $request->get('order', []);
 
-        $contentType = $request->get('contentType');
-        $page = $request->get('page');
-        $order = $request->get('order');
-
-        if (!isset($this->getTwig()->getGlobals()['config']->get('contenttypes')[$contentType]['fields']['sort'])) {
+        if (!is_array($order) || empty($order)) {
             return new JsonResponse([
                 'error' => true,
-            ], Response::HTTP_NOT_FOUND);
+                'message' => 'Invalid payload: order must be a non-empty array.',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
-        $perPage = $this->getTwig()->getGlobals()['config']->get('contenttypes')[$contentType]['records_per_page'];
+        $perPage = max(1, count($order));
 
         $sort = 1 + (($page-1)*$perPage);
 
@@ -44,6 +42,12 @@ class Controller extends ExtensionController
         $timestamp = $startTimestamp - (($page-1)*$perPage*3600);
 
         foreach ($order as $id) {
+            if (!is_numeric($id)) {
+                continue;
+            }
+
+            $id = (int) $id;
+
             $content = $contentFactory->upsert($contentType, [
                 'id' => $id
             ]);

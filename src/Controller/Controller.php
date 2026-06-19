@@ -15,12 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class Controller extends ExtensionController
 {
     #[Route('/dragsort', name: 'dragsort_sort', methods: ['POST'])]
-    public function handleDragSort(Request $request, ContentFactory $contentFactory): JsonResponse
-    {
-        return $this->handleRequest($request, $contentFactory);
-    }
-
-    private function handleRequest(Request $request, ContentFactory $contentFactory)
+    public function __invoke(Request $request, ContentFactory $contentFactory): JsonResponse
     {
         $contentType = (string) $request->get('contentType');
         $page = max(1, (int) $request->get('page', 1));
@@ -33,13 +28,12 @@ class Controller extends ExtensionController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $perPage = max(1, count($order));
+        // Berieme perPage z JavaScriptu, aby sme nepotrebovali Config (ako sme sa dohodli)
+        $perPage = max(1, (int) $request->get('perPage', 20));
 
-        $sort = 1 + (($page-1)*$perPage);
-
+        $sort = 1 + (($page - 1) * $perPage);
         $startTimestamp = strtotime('2000-01-01');
-
-        $timestamp = $startTimestamp - (($page-1)*$perPage*3600);
+        $timestamp = $startTimestamp - (($page - 1) * $perPage * 3600);
 
         foreach ($order as $id) {
             if (!is_numeric($id)) {
@@ -56,14 +50,12 @@ class Controller extends ExtensionController
             $date->setTimestamp($timestamp);
 
             $content->setCreatedAt($date);
-
             $content->setFieldValue('sort', $sort);
 
             $contentFactory->save($content);
 
             $sort++;
-
-            $timestamp = $timestamp - 3600;
+            $timestamp -= 3600;
         }
 
         return new JsonResponse([

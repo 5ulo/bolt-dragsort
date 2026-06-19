@@ -2,8 +2,8 @@
 
 <script>
     setTimeout(function() {
-        // Always bind Sortable to the direct parent of record rows.
-        // This works for both Bolt 5 and Bolt 6 and avoids dragging the whole group at once.
+        // Bind Sortable to the direct parent of record rows.
+        // This works for Bolt 6 and avoids dragging the whole group at once.
         var firstRecord = document.querySelector('.listing__records .listing--container');
         var el = firstRecord ? firstRecord.parentElement : null;
         if (!el) {
@@ -14,8 +14,7 @@
 
         for (var i = 0; i < records.length; i++) {
             // Bolt 6 uses .form-check-input (Bootstrap 5).
-            // Bolt 5 used .custom-control-input (Bootstrap 4).
-            var checkbox = records[i].querySelector('.form-check-input, .custom-control-input');
+            var checkbox = records[i].querySelector('.form-check-input');
             if (!checkbox) {
                 continue;
             }
@@ -66,7 +65,7 @@
                 // TODO
             })
             .catch(function(error) {
-                console.error('Chyba:', error);
+                console.error('Error:', error);
             });
         });
     }, 2000);

@@ -2,5 +2,5 @@
 
 dragsort_extension_controllers:
   resource: '../../vendor/jeschek/dragsort/src/Controller/'
+  type: attribute
   prefix: '%bolt.backend_url%/async'
-  type: annotation

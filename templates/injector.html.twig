@@ -43,7 +43,7 @@
             var formData = new URLSearchParams();
             formData.append('contentType', '{{ options.contentType }}');
             formData.append('page', '{{ options.page }}');
-            formData.append('perPage', '{{ options.limit|default(20) }}');
+            formData.append('perPage', '{{ options.perPage|default(20) }}');
 
             var orderArray = sortable.toArray();
             for (var i = 0; i < orderArray.length; i++) {

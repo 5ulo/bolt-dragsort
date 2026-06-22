@@ -1,5 +1,12 @@
 <script src="{{ asset('assets/dragsort/sortable.1.15.7.min.js', 'public') }}"></script>
-
+<style>
+    .listing__records .listing--container .listing--checkbox {
+        cursor: grab;
+    }
+    .listing__records .listing--container .listing--checkbox:active {
+        cursor: move;
+    }
+</style>
 <script>
     setTimeout(function() {
         // Bind Sortable to the direct parent of record rows.

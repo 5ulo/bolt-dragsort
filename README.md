@@ -1,8 +1,8 @@
-# Bolt 5 drag and drop extension
+# Bolt 6 drag and drop extension
 
 Author: Philipp Jeschek
 
-This extension enables drag and drop sorting for records in the backend of Bolt 5.
+This extension enables drag and drop sorting for records in the backend of Bolt 6.
 
 Installation:
 
